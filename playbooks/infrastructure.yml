@@ -1,0 +1,11 @@
+---
+# Infrastructure Management Playbook
+# This playbook handles infrastructure provisioning and configuration
+
+- name: Infrastructure Playbook
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Display playbook information
+      ansible.builtin.debug:
+        msg: "Running infrastructure.yml - Version: v1"

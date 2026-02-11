@@ -1,0 +1,11 @@
+---
+# Cluster Management Playbook
+# This playbook manages cluster operations
+
+- name: Cluster Playbook
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Display playbook information
+      ansible.builtin.debug:
+        msg: "Running cluster.yml - Version: v1"

@@ -1,0 +1,11 @@
+---
+# Services Management Playbook
+# This playbook manages application services
+
+- name: Services Playbook
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Display playbook information
+      ansible.builtin.debug:
+        msg: "Running services.yml - Version: v1"

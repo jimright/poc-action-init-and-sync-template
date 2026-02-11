@@ -1,0 +1,17 @@
+# Template Sync Ignore File
+# This file defines which files should be excluded when syncing from the template repository
+# Syntax follows glob patterns similar to .gitignore
+# Doc: https://github.com/AndreasAugustin/actions-template-sync#ignore-files
+
+# Exclude the ignore.yml playbook from syncing
+playbooks/ignore.yml
+
+# Include only specific playbooks by excluding everything else and then allowing specific files
+# Note: The action will sync everything by default except what's listed here
+# To only sync specific files, you would exclude all and then use negation patterns
+
+# Example: If you wanted to exclude all playbooks except cluster.yml, infrastructure.yml, and services.yml:
+# playbooks/*
+# !playbooks/cluster.yml
+# !playbooks/infrastructure.yml
+# !playbooks/services.yml

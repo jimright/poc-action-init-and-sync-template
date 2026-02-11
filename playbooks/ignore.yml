@@ -1,0 +1,11 @@
+---
+# This playbook will NOT be synced to child repositories
+# It's excluded in .templatesyncignore
+
+- name: Ignore Playbook (Template Only)
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Display playbook information
+      ansible.builtin.debug:
+        msg: "Running ignore.yml - Version: v1 (Template Only)"
