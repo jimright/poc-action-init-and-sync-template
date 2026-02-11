@@ -1,0 +1,76 @@
+name: Create and Push Multi-Arch Ansible Execution Environment Image
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      registry:
+        description: 'Container registry'
+        required: false
+        default: 'ghcr.io/${{ github.repository }}'
+      image_name:
+        description: 'Image name'
+        required: false
+        default: '<YOUR_IMAGE_NAME>'
+      tag_override:
+        description: 'Override tag (optional - uses hatch version if empty)'
+        required: false
+        default: ''
+      build_directory:
+        description: 'Directory containing execution-environment.yml (leave as "." for root directory)'
+        required: false
+        default: 'builder'
+      push_latest:
+        description: 'Also tag and push as latest'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  REGISTRY: ${{ github.event.inputs.registry || 'ghcr.io/${{ github.repository }}' }}
+  IMAGE_NAME: ${{ github.event.inputs.image_name || '<YOUR_IMAGE_NAME>' }}
+  BUILD_DIR: ${{ github.event.inputs.build_directory || 'builder' }}
+  PUSH_LATEST: ${{ github.event.inputs.push_latest || true }}
+  TAG_OVERRIDE: ${{ github.event.inputs.tag_override || '' }}
+
+jobs:
+  multi-arch-ee:
+    if: github.repository == '<YOUR_REPO_NAME>'
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install latest ansible-builder
+      run: pip install ansible-builder
+
+    - name: Set up QEMU for multi-arch builds
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: linux/amd64,linux/arm64
+
+    - name: Build image from builder context
+      uses: redhat-actions/buildah-build@v2
+      with:
+        context: ./context
+        containerfiles: |
+          ./context/Containerfile
+        platforms: linux/amd64, linux/arm64 # multi-arch build
+        image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: ${{ env.TAG_OVERRIDE || 'latest' }}
+
+    - name: Push image
+      id: push-image
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        tags: ${{ steps.meta.outputs.tags }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}

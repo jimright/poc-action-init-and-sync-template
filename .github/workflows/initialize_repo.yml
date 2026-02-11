@@ -1,0 +1,78 @@
+name: Initialize Repository from Template
+
+# This workflow triggers on the first push to a new repository created from this template
+# It will replace placeholders in README.md and build_and_push_ee_image.yml with actual values
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  initialize:
+    name: Initialize repository with actual values
+    
+    # We will only run this action when this repository isn't the
+    # template repository
+    #
+    if: >-
+      ${{ !github.event.repository.is_template }}
+    
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Check if already initialized
+        id: check_initialized
+        run: |
+          # Check if placeholders still exist in README.md
+          if grep -q '<YOUR_REPO_NAME>' README.md 2>/dev/null; then
+            echo "needs_init=true" >> $GITHUB_OUTPUT
+          else
+            echo "needs_init=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Replace placeholders in files
+        if: steps.check_initialized.outputs.needs_init == 'true'
+        run: |
+          REPO_NAME="${{ github.repository }}"
+          REPO_NAME_ONLY="${{ github.event.repository.name }}"
+          
+          # Replace placeholders in README.md
+          sed -i "s|<YOUR_REPO_NAME>|${REPO_NAME}|g" README.md
+          sed -i "s|<PLACEHOLDER>|${REPO_NAME_ONLY}|g" README.md
+          
+          # Replace placeholders in build_and_push_ee_image.yml
+          sed -i "s|<YOUR_IMAGE_NAME>|${REPO_NAME_ONLY}|g" .github/workflows/build_and_push_ee_image.yml
+          sed -i "s|<YOUR_REPO_NAME>|${REPO_NAME}|g" .github/workflows/build_and_push_ee_image.yml
+          # sed -i "s|ghcr.io/\${{ github.repository }}|ghcr.io/${REPO_NAME}|g" .github/workflows/build_and_push_ee_image.yml
+
+      - name: Commit changes
+        if: steps.check_initialized.outputs.needs_init == 'true'
+        run: |
+          git add README.md .github/workflows/build_and_push_ee_image.yml
+          git commit -m "chore: initialize repository from template - update placeholders"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete initialization workflow
+        if: steps.check_initialized.outputs.needs_init == 'true'
+        run: |
+          git rm .github/workflows/initialize_repo.yml
+          git commit -m "chore: remove initialization workflow after setup"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

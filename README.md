@@ -1,1 +1,3 @@
-# poc-action-init-and-sync-template
+# <YOUR_REPO_NAME>
+
+The <PLACEHOLDER> in this line has been updated.
