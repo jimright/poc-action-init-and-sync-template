@@ -12,7 +12,7 @@ on:
       registry:
         description: 'Container registry'
         required: false
-        default: 'ghcr.io/${{ github.repository }}'
+        default: ''
       image_name:
         description: 'Image name'
         required: false
@@ -32,7 +32,7 @@ on:
         default: false
 
 env:
-  REGISTRY: ${{ github.event.inputs.registry || 'ghcr.io/${{ github.repository }}' }}
+  REGISTRY: ${{ github.event.inputs.registry || format('ghcr.io/{0}', github.repository) }}
   IMAGE_NAME: ${{ github.event.inputs.image_name || '<YOUR_IMAGE_NAME>' }}
   BUILD_DIR: ${{ github.event.inputs.build_directory || 'builder' }}
   PUSH_LATEST: ${{ github.event.inputs.push_latest || true }}

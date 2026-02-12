@@ -3,6 +3,9 @@
 # Syntax follows glob patterns similar to .gitignore
 # Doc: https://github.com/AndreasAugustin/actions-template-sync#ignore-files
 
+# Exclude the initialization workflow (only runs once when repo is created from template)
+.github/workflows/initialize_repo.yml
+
 # Exclude the ignore.yml playbook from syncing
 playbooks/ignore.yml
 
