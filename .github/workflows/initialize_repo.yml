@@ -53,16 +53,20 @@ jobs:
           # Replace placeholders in README.md
           sed -i "s|<YOUR_REPO_NAME>|${REPO_NAME}|g" README.md
           sed -i "s|<PLACEHOLDER>|${REPO_NAME_ONLY}|g" README.md
-          
-          # Replace placeholders in build_and_push_ee_image.yml
-          sed -i "s|<YOUR_IMAGE_NAME>|${REPO_NAME_ONLY}|g" .github/workflows/build_and_push_ee_image.yml
-          sed -i "s|<YOUR_REPO_NAME>|${REPO_NAME}|g" .github/workflows/build_and_push_ee_image.yml
-          # sed -i "s|ghcr.io/\${{ github.repository }}|ghcr.io/${REPO_NAME}|g" .github/workflows/build_and_push_ee_image.yml
+
+          # NOTE: Modifying workflow files requires 'workflows' permission which GITHUB_TOKEN doesn't have by default.
+          # To enable this, you would need to either:
+          # 1. Use a PAT with 'workflows' scope, or
+          # 2. Enable "Allow GitHub Actions to create and approve pull requests" in repo settings
+          # For now, workflow files must be updated manually.
+          #
+          # sed -i "s|<YOUR_IMAGE_NAME>|${REPO_NAME_ONLY}|g" .github/workflows/build_and_push_ee_image.yml
+          # sed -i "s|<YOUR_REPO_NAME>|${REPO_NAME}|g" .github/workflows/build_and_push_ee_image.yml
 
       - name: Commit changes
         if: steps.check_initialized.outputs.needs_init == 'true'
         run: |
-          git add README.md .github/workflows/build_and_push_ee_image.yml
+          git add README.md
           git commit -m "chore: initialize repository from template - update placeholders"
           git push
         env:
