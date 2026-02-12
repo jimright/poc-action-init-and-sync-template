@@ -30,7 +30,6 @@ jobs:
         if: github.repository != env.SOURCE_REPOSITORY
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          persist-credentials: false
 
       # Doc: https://github.com/marketplace/actions/actions-template-sync
       - name: Sync playbooks from template repository

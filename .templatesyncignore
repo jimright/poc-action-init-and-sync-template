@@ -3,18 +3,24 @@
 # Syntax follows glob patterns similar to .gitignore
 # Doc: https://github.com/AndreasAugustin/actions-template-sync#ignore-files
 
-# Exclude the initialization workflow (only runs once when repo is created from template)
-.github/workflows/initialize_repo.yml
+# Exclude all files except the specified
+:!playbooks/cluster.yml
+:!playbooks/infrastructure.yml
+:!playbooks/services.yml
+*
 
-# Exclude the ignore.yml playbook from syncing
-playbooks/ignore.yml
+# # Exclude the initialization workflow (only runs once when repo is created from template)
+# .github/workflows/initialize_repo.yml
 
-# Include only specific playbooks by excluding everything else and then allowing specific files
-# Note: The action will sync everything by default except what's listed here
-# To only sync specific files, you would exclude all and then use negation patterns
+# # Exclude the ignore.yml playbook from syncing
+# playbooks/ignore.yml
 
-# Example: If you wanted to exclude all playbooks except cluster.yml, infrastructure.yml, and services.yml:
-# playbooks/*
-# !playbooks/cluster.yml
-# !playbooks/infrastructure.yml
-# !playbooks/services.yml
+# # Include only specific playbooks by excluding everything else and then allowing specific files
+# # Note: The action will sync everything by default except what's listed here
+# # To only sync specific files, you would exclude all and then use negation patterns
+
+# # Example: If you wanted to exclude all playbooks except cluster.yml, infrastructure.yml, and services.yml:
+# # playbooks/*
+# # !playbooks/cluster.yml
+# # !playbooks/infrastructure.yml
+# # !playbooks/services.yml
