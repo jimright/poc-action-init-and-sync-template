@@ -8,4 +8,4 @@
   tasks:
     - name: Display playbook information
       ansible.builtin.debug:
-        msg: "Running infrastructure.yml - Version: v2"
+        msg: "Running infrastructure.yml - Version: v1"
