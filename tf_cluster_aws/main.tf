@@ -1,0 +1,1 @@
+# AWS specified Terraform resources for the cluster
